@@ -1,63 +1,97 @@
 # 🗺️ Cognimap — Intelligent Environment-Aware Navigation
 
-> Navigate smarter. Not just faster.
+**Navigate smarter, not just faster.**
 
-Cognimap is a full-stack intelligent navigation system that scores and recommends routes based on **air quality, weather risk, road safety reports, and distance** — not just travel time. Built entirely on free, open-source APIs.
+Cognimap is a full-stack intelligent navigation platform that combines route planning, air quality, weather conditions, community-reported road issues, and AI-powered route assistance to recommend safer and smarter travel routes.
 
 ---
 
-## 📸 Features at a Glance
+## ✨ Features
 
-| Feature | Description |
-|---|---|
-| 🗺️ Map Interface | Leaflet.js map with dark/light themes |
-| 🔍 Smart Geocoding | Nominatim-powered place search with autocomplete |
-| 🛣️ Route Generation | OpenRouteService multi-route with alternates |
-| 🧠 Cognimap Score | Composite score: time + distance + AQI + weather + safety |
-| 🌿 AQI Tracking | OpenWeather air pollution API along route |
-| 🌦️ Weather Risk | Real-time weather conditions with risk scoring |
-| 📍 Road Reporting | Community pothole/hazard markers stored in MongoDB |
-| 🎨 Route Coloring | Green=safe, Yellow=moderate, Red=risky |
-| 🌙 Dark Mode | Toggle between dark and light map tiles |
+* 🗺️ Interactive Leaflet.js map with dark/light mode
+* 🔍 Smart place search with autocomplete using OpenStreetMap Nominatim
+* 🛣️ Multi-route generation using OpenRouteService
+* 🚗 Multiple travel modes (Drive, Cycle, Walk, Transit)
+* 🧠 Cognimap Score based on:
+
+  * Travel Time
+  * Distance
+  * Air Quality
+  * Weather Risk
+  * Road Safety Reports
+* 🌿 Real-time Air Quality Index (AQI)
+* 🌦️ Weather-aware route analysis
+* 📍 Community road issue reporting
+* 🤖 CogniAssist (Gemini-powered route assistant)
+* 🎨 Route safety visualization and recommendations
+* 📊 Environmental insights panel
+* ⭐ Saved locations and recent searches
+
+---
+
+## 🤖 CogniAssist
+
+CogniAssist is an AI-powered route assistant built using Gemini.
+
+You can ask questions such as:
+
+* Is this route safe?
+* How is the weather?
+* What is the air quality?
+* Are there any reported road issues?
+* When should I leave?
+
+**Note:** Toll pricing information is currently not available. Route recommendations are based on travel time, air quality, weather conditions, and reported road issues.
 
 ---
 
 ## 🏗️ Project Structure
 
-```
+```text
 cognimap/
+│
 ├── backend/
 │   ├── models/
-│   │   └── Report.js          # MongoDB road report schema
+│   │   └── Report.js
+│   │
 │   ├── routes/
-│   │   ├── route.js           # /api/route — ORS routing + scoring
-│   │   ├── geocode.js         # /api/geocode — Nominatim search
-│   │   ├── aqi.js             # /api/aqi — OpenWeather AQI+weather
-│   │   └── reports.js         # /api/reports — CRUD road issues
-│   ├── server.js              # Express app entry point
+│   │   ├── route.js
+│   │   ├── geocode.js
+│   │   ├── aqi.js
+│   │   ├── reports.js
+│   │   └── chat.js
+│   │
+│   ├── server.js
 │   ├── package.json
 │   └── .env.example
 │
 ├── frontend/
 │   ├── public/
 │   │   └── index.html
+│   │
 │   ├── src/
 │   │   ├── components/
-│   │   │   ├── Header.js      # App header with branding
-│   │   │   ├── SearchPanel.js # Origin/destination search
-│   │   │   ├── RouteCard.js   # Route display with score ring
-│   │   │   ├── EnvPanel.js    # AQI + weather + score breakdown
-│   │   │   ├── MapView.js     # Leaflet map with all overlays
-│   │   │   └── ReportModal.js # Road issue submission form
+│   │   │   ├── Header.js
+│   │   │   ├── SearchPanel.js
+│   │   │   ├── RouteCard.js
+│   │   │   ├── EnvPanel.js
+│   │   │   ├── MapView.js
+│   │   │   ├── ReportModal.js
+│   │   │   └── CogniAssist.js
+│   │   │
 │   │   ├── hooks/
 │   │   │   └── useDebounce.js
+│   │   │
 │   │   ├── utils/
-│   │   │   └── api.js         # Centralized axios API calls
+│   │   │   └── api.js
+│   │   │
 │   │   ├── App.js
 │   │   ├── App.css
 │   │   └── index.js
+│   │
 │   └── package.json
 │
+├── docker-compose.yml
 └── README.md
 ```
 
@@ -65,204 +99,171 @@ cognimap/
 
 ## ⚡ Quick Start
 
-### 1. Get Free API Keys
-
-| Service | URL | Free Tier |
-|---|---|---|
-| OpenRouteService | https://openrouteservice.org/dev/#/signup | 2000 req/day |
-| OpenWeather | https://openweathermap.org/api | 1000 req/day |
-| Nominatim | Built-in (OSM) | Rate-limited, no key needed |
-
-### 2. Clone & Configure Backend
+### 1. Clone Repository
 
 ```bash
-cd cognimap/backend
-cp .env.example .env
+git clone https://github.com/Ragini-create/Cognimap.git
+cd Cognimap
 ```
 
-Edit `.env`:
+### 2. Backend Setup
+
+```bash
+cd backend
+npm install
+```
+
+Create `.env`
+
 ```env
 PORT=5000
-MONGODB_URI=mongodb://localhost:27017/cognimap
-ORS_API_KEY=your_openrouteservice_key_here
-OPENWEATHER_API_KEY=your_openweather_key_here
+MONGODB_URI=your_mongodb_connection_string
+ORS_API_KEY=your_openrouteservice_api_key
+OPENWEATHER_API_KEY=your_openweather_api_key
+GEMINI_API_KEY=your_gemini_api_key
 FRONTEND_URL=http://localhost:3000
 ```
 
-### 3. Install & Run Backend
+Run backend:
 
 ```bash
-cd cognimap/backend
-npm install
-npm run dev        # or: npm start
+npm start
 ```
 
-Backend will start on **http://localhost:5000**  
-Check: http://localhost:5000/api/health
+Server:
 
-### 4. Install & Run Frontend
+```text
+http://localhost:5000
+```
+
+---
+
+### 3. Frontend Setup
 
 ```bash
-cd cognimap/frontend
+cd frontend
 npm install
 npm start
 ```
 
-Frontend will open on **http://localhost:3000**
+Frontend:
 
-### 5. MongoDB (Optional but recommended)
-
-Road reporting requires MongoDB. Install locally or use free MongoDB Atlas:
-
-**Local:**
-```bash
-# macOS
-brew install mongodb-community && brew services start mongodb-community
-
-# Ubuntu
-sudo systemctl start mongod
-
-# Docker
-docker run -d -p 27017:27017 --name cognimap-mongo mongo:7
+```text
+http://localhost:3000
 ```
 
-**MongoDB Atlas (free):**
-1. Create account at https://cloud.mongodb.com
-2. Create free M0 cluster
-3. Get connection string → add to `MONGODB_URI` in `.env`
+---
+
+## 🔌 APIs Used
+
+| Service                 | Purpose                         |
+| ----------------------- | ------------------------------- |
+| OpenRouteService        | Route generation                |
+| OpenWeather API         | AQI and weather data            |
+| OpenStreetMap Nominatim | Geocoding and reverse geocoding |
+| Gemini API              | AI route assistant              |
+| MongoDB Atlas           | Road issue storage              |
 
 ---
 
 ## 🧠 Cognimap Score Formula
 
-The score rates each route from 0–100 (higher = better/safer):
+Routes are scored from **0–100**.
 
+Higher score = Better Route
+
+```text
+Score =
+Travel Time +
+Distance +
+AQI +
+Weather Risk +
+Road Safety
 ```
-Raw Score = (w1 × time_norm) + (w2 × dist_norm) + (w3 × aqi_norm) 
-          + (w4 × weather_risk) + (w5 × safety_reports)
 
-Cognimap Score = 100 − Raw Score
-```
+### Weight Distribution
 
-**Weights:**
-| Factor | Weight | Normalized To |
-|---|---|---|
-| Travel Time | 30% | 1hr = 100 |
-| Distance | 20% | 50km = 100 |
-| AQI | 20% | Scale 1–5 |
-| Weather Risk | 15% | Risk 0–10 |
-| Road Safety | 15% | Reports near route |
+| Factor       | Weight |
+| ------------ | ------ |
+| Travel Time  | 30%    |
+| Distance     | 20%    |
+| AQI          | 20%    |
+| Weather Risk | 15%    |
+| Road Safety  | 15%    |
 
-**Score Grades:**
-- 80–100: 🟢 Excellent
-- 60–79: 🟡 Good  
-- 40–59: 🟠 Fair
-- 0–39: 🔴 Poor
+### Route Grades
+
+| Score  | Grade        |
+| ------ | ------------ |
+| 80–100 | 🟢 Excellent |
+| 60–79  | 🟡 Good      |
+| 40–59  | 🟠 Fair      |
+| 0–39   | 🔴 Poor      |
 
 ---
 
-## 🔌 API Reference
+## 📍 Road Reporting
 
-| Endpoint | Method | Description |
-|---|---|---|
-| `/api/route` | GET | Get routes with Cognimap scores |
-| `/api/geocode` | GET | Search places via Nominatim |
-| `/api/geocode/reverse` | GET | Coordinates → address |
-| `/api/aqi` | GET | AQI + weather for coordinates |
-| `/api/reports` | GET | Fetch road issue reports |
-| `/api/reports` | POST | Submit new road report |
-| `/api/reports/:id/upvote` | PATCH | Upvote a report |
-| `/api/health` | GET | Server status check |
+Users can report:
 
-### GET /api/route
-```
-?startLat=28.6139&startLng=77.2090&endLat=19.0760&endLng=72.8777
-```
+* Potholes
+* Flooding
+* Construction
+* Accidents
+* Debris
+* Other road hazards
 
-### POST /api/reports
-```json
-{
-  "type": "pothole",
-  "severity": "high",
-  "description": "Large pothole near junction",
-  "lat": 28.6139,
-  "lng": 77.2090
-}
-```
+Reports are stored in MongoDB and used while calculating route safety.
 
 ---
 
-## 📊 MongoDB Schema
+## 🚀 Future Enhancements
 
-```javascript
-// Report Schema
-{
-  type:        String  // pothole | flooding | construction | accident | debris | other
-  severity:    String  // low | medium | high
-  description: String  // max 500 chars
-  location: {
-    type:        "Point",
-    coordinates: [longitude, latitude]  // GeoJSON
-  }
-  address:     String
-  upvotes:     Number
-  active:      Boolean
-  createdAt:   Date    // auto-expires after 7 days
-  updatedAt:   Date
-}
-```
+* Toll estimation support
+* Live traffic integration
+* Voice navigation
+* Route sharing improvements
+* Mobile application
+* Predictive route recommendations
 
 ---
 
-## 🔧 Tech Stack
+## 🛠️ Tech Stack
 
-| Layer | Technology |
-|---|---|
-| **Frontend** | React 18, Leaflet.js, React-Leaflet |
-| **Styling** | Pure CSS with CSS Variables (no Tailwind dependency issue) |
-| **Backend** | Node.js 18+, Express 4 |
-| **Database** | MongoDB with Mongoose ODM |
-| **Routing** | OpenRouteService (ORS) |
-| **Geocoding** | Nominatim (OSM) |
-| **Environment** | OpenWeather API (AQI + Weather) |
-| **Map Tiles** | CartoDB (dark) / OSM (light) |
-| **Caching** | node-cache (in-memory, 5–15 min TTL) |
+### Frontend
 
----
+* React.js
+* React Leaflet
+* Leaflet.js
+* Axios
+* CSS3
 
-## 🚀 Deployment
+### Backend
 
-### Backend (Railway / Render / Fly.io)
-```bash
-# Set environment variables in your platform dashboard
-# Then deploy with:
-git push railway main
-```
+* Node.js
+* Express.js
+* MongoDB
+* Mongoose
 
-### Frontend (Vercel / Netlify)
-```bash
-cd frontend
-npm run build
-# Upload build/ folder to your static host
-# Set REACT_APP_API_URL to your deployed backend URL
-```
+### External Services
+
+* OpenRouteService
+* OpenWeather
+* Nominatim
+* Gemini AI
 
 ---
 
-## 🤝 Contributing
+## 👩‍💻 Author
 
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/my-feature`
-3. Commit: `git commit -m 'Add my feature'`
-4. Push: `git push origin feature/my-feature`
-5. Open a Pull Request
+**Sai Ragini Nagelly**
+
+GitHub: https://github.com/Ragini-create
 
 ---
 
 ## 📄 License
 
-MIT License — free to use, modify, and distribute.
+MIT License
 
----
-
-*Built with ❤️ using 100% free & open-source APIs*
+Free to use, modify and distribute.
