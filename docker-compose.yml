@@ -1,0 +1,36 @@
+# docker-compose.yml — Local development stack
+# Usage: docker-compose up
+version: "3.9"
+
+services:
+  mongo:
+    image: mongo:7
+    container_name: cognimap-mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    environment:
+      MONGO_INITDB_DATABASE: cognimap
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: cognimap-backend
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      PORT: 5000
+      MONGODB_URI: mongodb://mongo:27017/cognimap
+      ORS_API_KEY: ${ORS_API_KEY}
+      OPENWEATHER_API_KEY: ${OPENWEATHER_API_KEY}
+      FRONTEND_URL: http://localhost:3000
+      NODE_ENV: production
+    depends_on:
+      - mongo
+
+volumes:
+  mongo_data:
